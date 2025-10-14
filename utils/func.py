@@ -221,7 +221,8 @@ async def screenshot(video: str, duration: int, sender: str) -> str | None:
         "-ss", time_stamp,
         "-i", video,
         "-frames:v", "1",
-        "-vf", "scale='min(320,iw)':'min(320,ih)':force_original_aspect_ratio=decrease",
+        "-vf", "scale='min(640,iw)':'min(480,ih)':force_original_aspect_ratio=decrease",
+        "-q:v", "2",
         output_file,
         "-y"
     ]
@@ -372,8 +373,8 @@ async def repair_video_moov(input_path, output_path):
         return False, str(e)
 
 
-async def compress_video(input_path, max_width=1280, max_height=720):
-    """Resize video to Telegram standard dimensions (720p - 1280x720) with optimized speed and quality balance"""
+async def compress_video(input_path, max_width=640, max_height=480):
+    """Resize video to compact dimensions for better chat display"""
     try:
         output_path = f"{os.path.splitext(input_path)[0]}_resized{os.path.splitext(input_path)[1]}"
         
@@ -381,8 +382,8 @@ async def compress_video(input_path, max_width=1280, max_height=720):
             'ffmpeg', '-i', input_path,
             '-vf', f'scale=min({max_width}\\,iw):min({max_height}\\,ih):force_original_aspect_ratio=decrease',
             '-c:v', 'libx264',
-            '-crf', '20',
-            '-preset', 'medium',
+            '-crf', '23',
+            '-preset', 'fast',
             '-c:a', 'copy',
             '-movflags', '+faststart',
             '-y', output_path
