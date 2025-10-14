@@ -7,7 +7,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.errors import UserNotParticipant
 from config import API_ID, API_HASH, LOG_GROUP, STRING, FORCE_SUB, FREEMIUM_LIMIT, PREMIUM_LIMIT, OWNER_ID, BOT_TOKEN, MONGO_DB
-from utils.func import get_user_data, screenshot, thumbnail, get_video_metadata, validate_and_repair_video
+from utils.func import get_user_data, screenshot, thumbnail, get_video_metadata, validate_and_repair_video, compress_video
 from utils.func import get_user_data_key, process_text_with_rules, is_premium_user, E
 from shared_client import app as X
 from plugins.settings import rename_file
@@ -223,7 +223,7 @@ async def prog(c, t, C, h, m, st):
 async def send_direct(c, m, tcid, ft=None, rtmid=None):
     try:
         if m.video:
-            await c.send_video(tcid, m.video.file_id, caption=ft, duration=m.video.duration, width=m.video.width, height=m.video.height, reply_to_message_id=rtmid)
+            await c.send_video(tcid, m.video.file_id, caption=ft, duration=m.video.duration, width=m.video.width, height=m.video.height, supports_streaming=True, reply_to_message_id=rtmid)
         elif m.video_note:
             await c.send_video_note(tcid, m.video_note.file_id, reply_to_message_id=rtmid)
         elif m.voice:
@@ -321,6 +321,12 @@ async def process_msg(c, u, m, d, lt, uid, i):
                         if os.path.exists(f):
                             os.remove(f)
                         return 'Failed - corrupted video.'
+                    
+                    # Make video compact for better chat display
+                    await c.edit_message_text(d, p.id, 'Optimizing video...')
+                    is_compressed, comp_msg, f = await compress_video(f)
+                    if not is_compressed:
+                        await c.edit_message_text(d, p.id, f'Optimization warning: {comp_msg}')
                 
                 mtd = await get_video_metadata(f)
                 dur, h, w = mtd['duration'], mtd['width'], mtd['height']
@@ -337,6 +343,7 @@ async def process_msg(c, u, m, d, lt, uid, i):
                                         duration=dur if mtype == 'video' else None,
                                         height=h if mtype == 'video' else None,
                                         width=w if mtype == 'video' else None,
+                                        supports_streaming=True if mtype == 'video' else None,
                                         caption=ft if m.caption and mtype not in ['video_note', 'voice'] else None, 
                                         reply_to_message_id=rtmid, progress=prog, progress_args=(c, d, p.id, st))
                         break
@@ -366,11 +373,18 @@ async def process_msg(c, u, m, d, lt, uid, i):
                             os.remove(f)
                         return 'Failed - corrupted video.'
                     
+                    # Make video compact for better chat display
+                    await c.edit_message_text(d, p.id, 'Optimizing video...')
+                    is_compressed, comp_msg, f = await compress_video(f)
+                    if not is_compressed:
+                        await c.edit_message_text(d, p.id, f'Optimization warning: {comp_msg}')
+                    
                     mtd = await get_video_metadata(f)
                     dur, h, w = mtd['duration'], mtd['width'], mtd['height']
                     th = await screenshot(f, dur, d)
                     await c.send_video(tcid, video=f, caption=ft if m.caption else None, 
                                     thumb=th, width=w, height=h, duration=dur, 
+                                    supports_streaming=True,
                                     progress=prog, progress_args=(c, d, p.id, st), 
                                     reply_to_message_id=rtmid)
                 elif m.video_note:
