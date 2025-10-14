@@ -1,0 +1,58 @@
+pyrogram.session.session - INFO - Session started
+2025-10-14 16:07:40,785 - pyrogram.session.session - INFO - PingTask started
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x19E4 at pos 0x1573E
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x6192 at pos 0x24726
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xCDE2 at pos 0x31151
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x40D6 at pos 0x3647E
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x7D56 at pos 0x393B0
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x4FA6 at pos 0x3E486
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x1546 at pos 0x4E418
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x0DBF at pos 0x54C21
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x465D at pos 0x5BC8A
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x2B83 at pos 0x5CCDA
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x4C7A at pos 0x5E1B6
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x5EA6 at pos 0x6A9F9
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x2B21 at pos 0x6CD63
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x6AC6 at pos 0x762D9
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x5786 at pos 0x7A4F1
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x6085 at pos 0x7CAED
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xE2AF at pos 0x83BE7
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xD0E3 at pos 0x851E9
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xAF11 at pos 0x9328D
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x2F8F at pos 0x94EA0
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x7374 at pos 0x9D0E8
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x6263 at pos 0xA434F
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x8699 at pos 0xB31B6
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x131C at pos 0xBDA3D
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xCD7D at pos 0xCB138
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xAF52 at pos 0xD6532
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xB096 at pos 0xD9202
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xE211 at pos 0xDCE3E
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xCFB3 at pos 0xEB418
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x0CB6 at pos 0xF7C43
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xDAD8 at pos 0xF867B
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x0E08 at pos 0xFBC51
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xD7A1 at pos 0xFF6DC
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x1841 at pos 0x10A508
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xB16F at pos 0x11059D
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x4815 at pos 0x1149DB
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x7E60 at pos 0x11BCF1
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x5F08 at pos 0x11EA71
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xF935 at pos 0x12AD9C
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x2D37 at pos 0x13146C
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x00AC at pos 0x137E56
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x7E36 at pos 0x13D0C8
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xE164 at pos 0x13F49B
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x867E at pos 0x147171
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x5890 at pos 0x154FBD
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xB24C at pos 0x160374
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x9AFC at pos 0x16EDBD
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x1B87 at pos 0x17C14F
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0xA405 at pos 0x18BF49
+[jpeg2000 @ 0x7fb1780023c0] unsupported marker 0x6F72 at pos 0x19B033
+[jpeg2000 @ 0x7fb1780023c0] [IMGUTILS @ 0x7fb182ff9400] Picture size 0x0 is invalid
+[jpeg2000 @ 0x7fb1780023c0] video_get_buffer: image parameters invalid
+[jpeg2000 @ 0x7fb1780023c0] get_buffer() failed
+[jpeg2000 @ 0x7fb1780023c0] thread_get_buffer() failed
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0x7fb178001600] moov atom not found
+[ WARN:0@165.277] global cap.cpp:175 open VIDEOIO(CV_IMAGES): raised OpenCV exception:
