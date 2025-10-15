@@ -25,7 +25,10 @@ async def run_autosetup_plugin():
             BotCommand("terms", "🥺 Terms and conditions"),
             BotCommand("help", "❓ If you're a noob, still!"),
             BotCommand("cancel", "🚫 Cancel login/batch/settings process"),
-            BotCommand("stop", "🚫 Cancel batch process")
+            BotCommand("stop", "🚫 Cancel batch process"),
+            BotCommand("reset", "🔄 Clear all active batches (Owner)"),
+            BotCommand("logs", "📋 Get bot console logs (Owner)"),
+            BotCommand("clearlogs", "🧹 Clear old log files (Owner)")
         ])
         print("✅ Bot commands menu configured successfully! (BotFather style)")
     except Exception as e:
