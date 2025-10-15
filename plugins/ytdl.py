@@ -314,6 +314,11 @@ def progress_callback(done, total, user_id):
  
 async def process_video(client, event, url, cookies_env_var, check_duration_and_size=False):
     start_time = time.time()
+    print(f"\n{=*60}")
+    print(f"🎬 VIDEO DOWNLOAD REQUEST")
+    print(f"{=*60}")
+    print(f"🔗 URL: {url}")
+    print(f"👤 User: {event.sender_id}")
     logger.info(f"Received link: {url}")
      
     cookies = None
@@ -349,7 +354,10 @@ async def process_video(client, event, url, cookies_env_var, check_duration_and_
     progress_message = await event.reply("**__Starting download...__**")
     logger.info("Starting the download process...")
     try:
+        print(f"⬇️  Starting video download from yt-dlp...")
         info_dict = await fetch_video_info(url, ydl_opts, progress_message, check_duration_and_size)
+        print(f"✅ Download complete!")
+        print(f"📹 Video Title: {title}")
         if not info_dict:
             return
          
@@ -367,6 +375,7 @@ async def process_video(client, event, url, cookies_env_var, check_duration_and_
  
          
         if thumbnail_url:
+            print(f"🖼️  Thumbnail downloaded successfully")
             thumbnail_file = os.path.join(tempfile.gettempdir(), get_random_string() + ".jpg")
             downloaded_thumb = d_thumbnail(thumbnail_url, thumbnail_file)
             if downloaded_thumb:
@@ -404,6 +413,8 @@ async def process_video(client, event, url, cookies_env_var, check_duration_and_
                         w=metadata['width'],
                         h=metadata['height'],
                     )
+            print(f"✅ UPLOAD COMPLETE!")
+            print(f"{=*60}\n")
                 ],
                 thumb=THUMB if THUMB else None
             )
