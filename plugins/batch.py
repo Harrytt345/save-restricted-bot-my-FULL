@@ -223,7 +223,7 @@ async def prog(c, t, C, h, m, st):
 async def send_direct(c, m, tcid, ft=None, rtmid=None):
     try:
         if m.video:
-            await c.send_video(tcid, m.video.file_id, caption=ft, duration=m.video.duration, width=m.video.width, height=m.video.height, supports_streaming=True, reply_to_message_id=rtmid)
+            await c.send_video(tcid, m.video.file_id, caption=ft, duration=m.video.duration, width=m.video.width, height=m.video.height, reply_to_message_id=rtmid)
         elif m.video_note:
             await c.send_video_note(tcid, m.video_note.file_id, reply_to_message_id=rtmid)
         elif m.voice:
@@ -343,7 +343,7 @@ async def process_msg(c, u, m, d, lt, uid, i):
                                         duration=dur if mtype == 'video' else None,
                                         height=h if mtype == 'video' else None,
                                         width=w if mtype == 'video' else None,
-                                        supports_streaming=True if mtype == 'video' else None,
+                                        
                                         caption=ft if m.caption and mtype not in ['video_note', 'voice'] else None, 
                                         reply_to_message_id=rtmid, progress=prog, progress_args=(c, d, p.id, st))
                         break
@@ -384,7 +384,7 @@ async def process_msg(c, u, m, d, lt, uid, i):
                     th = await screenshot(f, dur, d)
                     await c.send_video(tcid, video=f, caption=ft if m.caption else None, 
                                     thumb=th, width=w, height=h, duration=dur, 
-                                    supports_streaming=True,
+                                    
                                     progress=prog, progress_args=(c, d, p.id, st), 
                                     reply_to_message_id=rtmid)
                 elif m.video_note:
