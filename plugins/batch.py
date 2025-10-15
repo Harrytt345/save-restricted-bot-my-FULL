@@ -246,6 +246,10 @@ async def send_direct(c, m, tcid, ft=None, rtmid=None):
 
 async def process_msg(c, u, m, d, lt, uid, i):
     try:
+        print(f"\n{'='*60}")
+        print(f"📥 PROCESSING MESSAGE | User: {uid} | Link Type: {lt}")
+        print(f"{'='*60}")
+        
         cfg_chat = await get_user_data_key(d, 'chat_id', None)
         tcid = d
         rtmid = None
@@ -257,6 +261,8 @@ async def process_msg(c, u, m, d, lt, uid, i):
             else:
                 tcid = int(cfg_chat)
         
+        print(f"📍 Target Chat ID: {tcid} | Reply To: {rtmid if rtmid else 'None'}")
+        
         if m.media:
             orig_text = m.caption.markdown if m.caption else ''
             proc_text = await process_text_with_rules(d, orig_text)
@@ -264,10 +270,12 @@ async def process_msg(c, u, m, d, lt, uid, i):
             ft = f'{proc_text}\n\n{user_cap}' if proc_text and user_cap else user_cap if user_cap else proc_text
             
             if lt == 'public' and not emp.get(i, False):
+                print(f"⚡ FAST MODE: Sending directly without download")
                 await send_direct(c, m, tcid, ft, rtmid)
                 return 'Sent directly.'
             
             st = time.time()
+            print(f"⬇️  DOWNLOAD STARTED | Time: {time.strftime('%H:%M:%S', time.localtime(st))}")
             p = await c.send_message(d, 'Downloading...')
 
             c_name = f"{time.time()}"
@@ -291,13 +299,21 @@ async def process_msg(c, u, m, d, lt, uid, i):
                 c_name = sanitize(file_name)
     
             download_path = os.path.join("downloads", c_name.strip())
+            print(f"📂 Download Path: {download_path}")
+            print(f"⏳ Downloading media...")
+            
             f = await u.download_media(m, file_name=download_path, progress=prog, progress_args=(c, d, p.id, st))
             
             if not f:
+                print(f"❌ DOWNLOAD FAILED!")
                 await c.edit_message_text(d, p.id, 'Failed.')
                 return 'Failed.'
             
+            download_time = time.time() - st
+            print(f"✅ DOWNLOAD COMPLETE | Time: {download_time:.2f}s | File: {f}")
+            
             await c.edit_message_text(d, p.id, 'Renaming...')
+            print(f"📝 Renaming file...")
             if (
                 (m.video and m.video.file_name) or
                 (m.audio and m.audio.file_name) or
@@ -306,31 +322,45 @@ async def process_msg(c, u, m, d, lt, uid, i):
                 f = await rename_file(f, d, p)
             
             fsize = os.path.getsize(f) / (1024 * 1024 * 1024)
+            fsize_mb = os.path.getsize(f) / (1024 * 1024)
+            print(f"📊 File Size: {fsize_mb:.2f} MB ({fsize:.2f} GB)")
+            
             th = thumbnail(d)
+            print(f"🖼️  Thumbnail: {'Found' if th else 'Will generate'}")
             
             if fsize > 2 and Y:
+                print(f"⚠️  LARGE FILE DETECTED (>2GB) | Using alternative upload method")
                 st = time.time()
                 await c.edit_message_text(d, p.id, 'File is larger than 2GB. Using alternative method...')
                 await upd_dlg(Y)
                 
                 # Validate video file before processing
                 if m.video or f.endswith(('.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm')):
+                    print(f"🔍 Validating video file...")
                     is_valid, msg, f = await validate_and_repair_video(f)
                     if not is_valid:
+                        print(f"❌ VIDEO VALIDATION FAILED: {msg}")
                         await c.edit_message_text(d, p.id, f'Video validation failed: {msg}')
                         if os.path.exists(f):
                             os.remove(f)
                         return 'Failed - corrupted video.'
                     
                     # Make video compact for better chat display
+                    print(f"✅ Video validated successfully")
                     await c.edit_message_text(d, p.id, 'Optimizing video...')
+                    print(f"⚙️  Compressing video for optimal upload...")
                     is_compressed, comp_msg, f = await compress_video(f)
                     if not is_compressed:
+                        print(f"⚠️  COMPRESSION WARNING: {comp_msg}")
                         await c.edit_message_text(d, p.id, f'Optimization warning: {comp_msg}')
                 
+                print(f"📹 Extracting video metadata...")
                 mtd = await get_video_metadata(f)
                 dur, h, w = mtd['duration'], mtd['width'], mtd['height']
+                print(f"   Duration: {dur}s | Resolution: {w}x{h}")
+                print(f"🖼️  Generating thumbnail...")
                 th = await screenshot(f, dur, d)
+                print(f"   Thumbnail: {'Generated' if th else 'Failed'}")
                 
                 send_funcs = {'video': Y.send_video, 'video_note': Y.send_video_note, 
                             'voice': Y.send_voice, 'audio': Y.send_audio, 
@@ -351,12 +381,16 @@ async def process_msg(c, u, m, d, lt, uid, i):
                     sent = await Y.send_document(LOG_GROUP, f, thumb=th, caption=ft if m.caption else None,
                                                 reply_to_message_id=rtmid, progress=prog, progress_args=(c, d, p.id, st))
                 
+                print(f"📤 Copying message to target chat...")
                 await c.copy_message(d, LOG_GROUP, sent.id)
                 os.remove(f)
                 await c.delete_messages(d, p.id)
+                print(f"✅ UPLOAD COMPLETE (Large file method)")
+                print(f"{'='*60}\n")
                 
                 return 'Done (Large file).'
             
+            print(f"⬆️  UPLOAD STARTED (Standard method)")
             await c.edit_message_text(d, p.id, 'Uploading...')
             st = time.time()
 
@@ -366,65 +400,94 @@ async def process_msg(c, u, m, d, lt, uid, i):
                 file_ext = os.path.splitext(f)[1].lower()
                 if m.video or (m.document and file_ext in video_extensions):
                     # Validate video file before processing
+                    print(f"🔍 Validating video file...")
                     is_valid, msg, f = await validate_and_repair_video(f)
                     if not is_valid:
+                        print(f"❌ VIDEO VALIDATION FAILED: {msg}")
                         await c.edit_message_text(d, p.id, f'Video validation failed: {msg}')
                         if os.path.exists(f):
                             os.remove(f)
                         return 'Failed - corrupted video.'
                     
                     # Make video compact for better chat display
+                    print(f"✅ Video validated successfully")
                     await c.edit_message_text(d, p.id, 'Optimizing video...')
+                    print(f"⚙️  Compressing video for optimal upload...")
                     is_compressed, comp_msg, f = await compress_video(f)
                     if not is_compressed:
+                        print(f"⚠️  COMPRESSION WARNING: {comp_msg}")
                         await c.edit_message_text(d, p.id, f'Optimization warning: {comp_msg}')
                     
+                    print(f"✅ Video validated successfully")
+                    print(f"📹 Extracting video metadata...")
                     mtd = await get_video_metadata(f)
                     dur, h, w = mtd['duration'], mtd['width'], mtd['height']
+                    print(f"   Duration: {dur}s | Resolution: {w}x{h}")
+                    print(f"🖼️  Generating thumbnail...")
                     th = await screenshot(f, dur, d)
+                    print(f"   Thumbnail: {'Generated' if th else 'Failed'}")
+                    print(f"📤 Uploading video...")
                     await c.send_video(tcid, video=f, caption=ft if m.caption else None, 
                                     thumb=th, width=w, height=h, duration=dur, 
                                     
                                     progress=prog, progress_args=(c, d, p.id, st), 
                                     reply_to_message_id=rtmid)
                 elif m.video_note:
+                    print(f"📤 Uploading video note...")
                     await c.send_video_note(tcid, video_note=f, progress=prog, 
                                         progress_args=(c, d, p.id, st), reply_to_message_id=rtmid)
                 elif m.voice:
+                    print(f"📤 Uploading voice message...")
                     await c.send_voice(tcid, f, progress=prog, progress_args=(c, d, p.id, st), 
                                     reply_to_message_id=rtmid)
                 elif m.sticker:
+                    print(f"📤 Uploading sticker...")
                     await c.send_sticker(tcid, m.sticker.file_id, reply_to_message_id=rtmid)
                 elif m.audio or (m.document and file_ext in audio_extensions):
+                    print(f"📤 Uploading audio...")
                     await c.send_audio(tcid, audio=f, caption=ft if m.caption else None, 
                                     thumb=th, progress=prog, progress_args=(c, d, p.id, st), 
                                     reply_to_message_id=rtmid)
                 elif m.photo:
+                    print(f"📤 Uploading photo...")
                     await c.send_photo(tcid, photo=f, caption=ft if m.caption else None, 
                                     progress=prog, progress_args=(c, d, p.id, st), 
                                     reply_to_message_id=rtmid)
                 elif m.document:
+                    print(f"📤 Uploading document...")
                     await c.send_document(tcid, document=f, caption=ft if m.caption else None, 
                                         progress=prog, progress_args=(c, d, p.id, st), 
                                         reply_to_message_id=rtmid)
                 else:
+                    print(f"📤 Uploading as document...")
                     await c.send_document(tcid, document=f, caption=ft if m.caption else None, 
                                         progress=prog, progress_args=(c, d, p.id, st), 
                                         reply_to_message_id=rtmid)
             except Exception as e:
+                print(f"❌ UPLOAD FAILED: {str(e)}")
                 await c.edit_message_text(d, p.id, f'Upload failed: {str(e)[:30]}')
                 if os.path.exists(f): os.remove(f)
                 return 'Failed.'
             
+            upload_time = time.time() - st
+            print(f"✅ UPLOAD COMPLETE | Time: {upload_time:.2f}s")
+            print(f"🧹 Cleaning up...")
             os.remove(f)
             await c.delete_messages(d, p.id)
+            print(f"✅ PROCESS COMPLETE")
+            print(f"{'='*60}\n")
             
             return 'Done.'
             
         elif m.text:
+            print(f"📝 Sending text message...")
             await c.send_message(tcid, text=m.text.markdown, reply_to_message_id=rtmid)
+            print(f"✅ Text message sent")
+            print(f"{'='*60}\n")
             return 'Sent.'
     except Exception as e:
+        print(f"❌ ERROR in process_msg: {str(e)}")
+        print(f"{'='*60}\n")
         return f'Error: {str(e)[:50]}'
         
 @X.on_message(filters.command(['batch', 'single']))
