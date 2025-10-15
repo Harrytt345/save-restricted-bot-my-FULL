@@ -221,8 +221,7 @@ async def screenshot(video: str, duration: int, sender: str) -> str | None:
         "-ss", time_stamp,
         "-i", video,
         "-frames:v", "1",
-        "-vf", "scale='min(640,iw)':'min(480,ih)':force_original_aspect_ratio=decrease",
-        "-q:v", "2",
+        "-vf", "scale='min(320,iw)':'min(320,ih)':force_original_aspect_ratio=decrease",
         output_file,
         "-y"
     ]
