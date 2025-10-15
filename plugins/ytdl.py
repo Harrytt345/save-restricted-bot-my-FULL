@@ -403,7 +403,6 @@ async def process_video(client, event, url, cookies_env_var, check_duration_and_
                         duration=metadata['duration'],
                         w=metadata['width'],
                         h=metadata['height'],
-                        supports_streaming=True
                     )
                 ],
                 thumb=THUMB if THUMB else None
