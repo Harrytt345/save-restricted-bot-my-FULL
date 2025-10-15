@@ -50,6 +50,8 @@ async def set(_, message):
         BotCommand("cancel", "🚫 Cancel login/batch/settings process"),
         BotCommand("stop", "🚫 Cancel batch process"),
         BotCommand("reset", "🔄 Clear all active batches (Owner)"),
+        BotCommand("logs", "📋 Get bot console logs (Owner)"),
+        BotCommand("clearlogs", "🧹 Clear old log files (Owner)")
     ])
  
     await message.reply("✅ Commands configured successfully!")
